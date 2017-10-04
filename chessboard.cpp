@@ -1,3 +1,14 @@
+/*TODO
+implement a piece class instead of using chars
+replace malloc commands with new
+close memory leaks using free(ptr*)
+implement special move rules (castling/en pasante)
+check/checkmate
+complex input, used to distinguish multiple different possible piece movements
+first player/second player input
+move invalids if moving through any piece or onto friendly piece
+*/
+
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
