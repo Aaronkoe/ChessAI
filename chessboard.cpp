@@ -1,4 +1,5 @@
 /*TODO
+split code into headers and .cpp file
 implement a piece class instead of using chars
 replace malloc commands with new
 close memory leaks using free(ptr*)
@@ -12,38 +13,10 @@ move invalids if moving through any piece or onto friendly piece
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
+#include "chessboard.h"
 
 using namespace std;
 
-class chessBoard {
-  private:
-    //printing functions
-    void printMoveSet(pair<int, int> moveSet[]);
-
-    //piece moving functions
-    void changeSpot(pair<int, int> destination, pair<int, int> origination);
-
-    //piece finding functions
-    pair<int, int> findPiece(char piece, pair<int, int> destination);
-    pair<int, int> findCorrectPiece(pair<int, int> destination, pair<int, int> matches[]);
-
-    //information parsing functions
-    char            getPiece(string move);
-    pair<int, int>  getDestination(string move);
-    pair<int, int>* getMoveSet(pair<int, int> piecePosition);
-    bool destInMoveSet(pair<int, int> destination, pair<int, int> piecePosition);
-  public:
-    //member variables
-    char board[8][8];
-    //constructor
-    chessBoard();
-
-    //functions
-    void printBoard(void);
-    void movePiece(string move);
-    void manualWrite(int col, int row, char chr);
-    bool validMove(string move);
-};
 
 chessBoard::chessBoard() {
   int col, row;
@@ -146,9 +119,7 @@ pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination) {
   if (c <= 0) {
     throw invalid_argument("Could not find piece position: err 1");
   } else if (c == 1) {
-    pair<int, int> match =  matches[0];
-    free matches;
-    return match;
+    return  matches[0];
   } else {
     return findCorrectPiece(destination, matches);
   }
