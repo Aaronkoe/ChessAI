@@ -13,7 +13,7 @@ move invalids if moving through any piece or onto friendly piece
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
-#include "chessboard2.h"
+#include "chessboard.h"
 #include "chesspiece.cpp"
 
 
@@ -175,8 +175,9 @@ void chessBoard::printMoveSet(pair<int, int> moveSet[]) {
   cout << "moveSet[" << i << "] = "<<moveSet[i].first<<", "<<moveSet[i].second<<endl;
   return;
 }
-//TODO here down implement piece class
+
 void chessBoard::changeSpot(pair<int, int> destination, pair<int, int> origination) {
+  board[origination.first][origination.second].changePiecePosition(destination);
   board[destination.first][destination.second] = board[origination.first][origination.second];
   board[origination.first][origination.second] = ' ';
   return;

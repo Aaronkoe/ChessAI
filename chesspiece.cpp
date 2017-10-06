@@ -183,7 +183,13 @@ std::pair<int, int>* chessPiece::getMoveSet() {
   validMoves[c] = std::make_pair(-1,-1);
   return validMoves;
 }
-  
+
+void chessPiece::changePieceSpot(pair<int, int> destination) {
+  location.first = destination.first;
+  location.second = destination.second;
+  return;
+}  
+
 int main() {
   int i = 0;
   chessPiece board[8][8];
