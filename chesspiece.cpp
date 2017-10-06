@@ -1,17 +1,14 @@
 #include <iostream>
 #include <utility>
 #include <cstdlib> 
+#include "chesspiece.h"
 
-class chessPiece {
-  public:
-    char piece;
-    chessPiece(char pieceClass);
-    std::pair<int, int>* getMoveSet(std::pair<int, int> piecePosition);
-    friend std::ostream& operator<< (std::ostream &out, const chessPiece &p);
-};
+chessPiece::chessPiece() { }
 
-chessPiece::chessPiece(char p) {
- piece = p;
+chessPiece::chessPiece(char p, std::pair<int, int> loc) {
+  piece = p;
+  location.first = loc.first;
+  location.second = loc.second;
 }
 
 std::ostream& operator<< (std::ostream &out, const chessPiece &p) {
@@ -19,9 +16,12 @@ std::ostream& operator<< (std::ostream &out, const chessPiece &p) {
   return out;
 }
 
-std::pair<int, int>* chessPiece::getMoveSet(std::pair<int, int> piecePosition) {
+std::pair<int, int>* chessPiece::getMoveSet() {
+  std::pair<int, int> piecePosition;
+  piecePosition.first = location.first;
+  piecePosition.second = location.second;
   std::pair<int, int>* validMoves = (std::pair<int, int>*) malloc(sizeof(std::pair<int, int>) * 30);
-  int i = 0, j = 0, c = 0;
+  int i = 1, j = 1, c = 0;
   switch (piece) {
     case 'p':
       validMoves[0] = std::make_pair(piecePosition.first, piecePosition.second + 1);
@@ -39,21 +39,25 @@ std::pair<int, int>* chessPiece::getMoveSet(std::pair<int, int> piecePosition) {
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.second + i < 8) {
         validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second + i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.second - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second - i);
         i++;
         c++;
       }
+      i = 1;
       break;
     case 'n': case 'N':
       if (piecePosition.first - 2 >= 0 && piecePosition.second - 1 >= 0) {
@@ -100,16 +104,19 @@ std::pair<int, int>* chessPiece::getMoveSet(std::pair<int, int> piecePosition) {
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first + i < 8 && piecePosition.second - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second - i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first - i >= 0 && piecePosition.second - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second - i);
         i++;
         c++;
       }
+      i = 1;
       break;
     case 'q': case 'Q':
       while (piecePosition.first + i < 8) {
@@ -117,41 +124,49 @@ std::pair<int, int>* chessPiece::getMoveSet(std::pair<int, int> piecePosition) {
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.second + i < 8) {
         validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second + i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.second - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second - i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first + i < 8 && piecePosition.second + i < 8) {
         validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second + i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first - i >= 0 && piecePosition.second + i < 8) {
         validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second + i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first + i < 8 && piecePosition.second - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second - i);
         i++;
         c++;
       }
+      i = 1;
       while (piecePosition.first - i >= 0 && piecePosition.second - i >= 0) {
         validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second - i);
         i++;
         c++;
       }
+      i = 1;
       break;
     case 'k': case 'K':
       for (i = -1; i <= 1; i++) {
@@ -169,3 +184,19 @@ std::pair<int, int>* chessPiece::getMoveSet(std::pair<int, int> piecePosition) {
   return validMoves;
 }
   
+int main() {
+  int i = 0;
+  chessPiece board[8][8];
+  std::pair<int, int> piecePosition;
+  piecePosition.first = 0;
+  piecePosition.second = 0;
+  board[0][0] = chessPiece('r', piecePosition);
+  std::cout << board[0][0];
+  std::pair<int, int> position = std::make_pair(1,1);
+  std::pair<int, int>* moveSet = board[0][0].getMoveSet();
+  while (moveSet[i].first >= 0 || moveSet[i].second >= 0) {
+    std::cout << moveSet[i].first<<", "<<moveSet[i].second<<std::endl;
+    i++;
+  }
+  return 1;
+}
