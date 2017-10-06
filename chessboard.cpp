@@ -1,3 +1,4 @@
+//HELLO
 /*TODO
 split code into headers and .cpp file
 implement a piece class instead of using chars
