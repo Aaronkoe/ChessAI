@@ -5,8 +5,8 @@
 
 chessPiece::chessPiece() { }
 
-chessPiece::chessPiece(char p, std::pair<int, int> loc) {
-  piece = p;
+chessPiece::chessPiece(char pieceClass, std::pair<int, int> loc) {
+  piece = pieceClass;
   location.first = loc.first;
   location.second = loc.second;
 }
@@ -184,25 +184,8 @@ std::pair<int, int>* chessPiece::getMoveSet() {
   return validMoves;
 }
 
-void chessPiece::changePieceSpot(pair<int, int> destination) {
+void chessPiece::changePiecePosition(std::pair<int, int> destination) {
   location.first = destination.first;
   location.second = destination.second;
   return;
 }  
-
-int main() {
-  int i = 0;
-  chessPiece board[8][8];
-  std::pair<int, int> piecePosition;
-  piecePosition.first = 0;
-  piecePosition.second = 0;
-  board[0][0] = chessPiece('r', piecePosition);
-  std::cout << board[0][0];
-  std::pair<int, int> position = std::make_pair(1,1);
-  std::pair<int, int>* moveSet = board[0][0].getMoveSet();
-  while (moveSet[i].first >= 0 || moveSet[i].second >= 0) {
-    std::cout << moveSet[i].first<<", "<<moveSet[i].second<<std::endl;
-    i++;
-  }
-  return 1;
-}

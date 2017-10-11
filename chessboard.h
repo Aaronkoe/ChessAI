@@ -9,7 +9,7 @@ class chessBoard {
     void printMoveSet(std::pair<int, int> moveSet[]);
 
     //piece moving functions
-    void changeSpot(std::pair<int, int> destination, std::pair<int, int> origination);
+    void changeSpot(std::pair<int, int> dest, std::pair<int, int> orig);
 
     //piece finding functions
     std::pair<int, int> findPiece(char piece, std::pair<int, int> destination);
