@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
+#include "chesspiece.cpp"
 
 class chessBoard {
   private:
@@ -8,7 +9,7 @@ class chessBoard {
     void printMoveSet(std::pair<int, int> moveSet[]);
 
     //piece moving functions
-    void changeSpot(std::pair<int, int> destination, std::pair<int, int> origination);
+    void changeSpot(std::pair<int, int> dest, std::pair<int, int> orig);
 
     //piece finding functions
     std::pair<int, int> findPiece(char piece, std::pair<int, int> destination);
@@ -21,7 +22,7 @@ class chessBoard {
     bool destInMoveSet(std::pair<int, int> destination, std::pair<int, int> piecePosition);
   public:
     //member variables
-    char board[8][8];
+    chessPiece board[8][8];
     //constructor
     chessBoard();
 

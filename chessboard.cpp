@@ -15,61 +15,65 @@ move invalids if moving through any piece or onto friendly piece
 #include <stdexcept>
 #include "chessboard.h"
 
+
 using namespace std;
 
 
 chessBoard::chessBoard() {
   int col, row;
+  pair<int, int> piecePosition;
   for (col = 0; col <= 7; col++) {
     for (row = 0; row <= 7; row++) {
+      piecePosition.first = col;
+      piecePosition.second = row;
       if (row == 1) {
-        board[col][row] = 'p';
+        board[col][row] = chessPiece('p', piecePosition);
       } else if (row == 0) {
           switch (col) {
             case 0:
             case 7:
-              board[col][row] = 'r';
+              board[col][row] = chessPiece('r', piecePosition);
               break;
             case 1:
             case 6:
-              board[col][row] = 'n';
+              board[col][row] = chessPiece('n', piecePosition);
               break;
             case 2:
             case 5:
-              board[col][row] = 'b';
+              board[col][row] = chessPiece('b', piecePosition);
               break;
             case 3:
-              board[col][row] = 'q';
+              board[col][row] = chessPiece('q', piecePosition);
               break;
             case 4:
-              board[col][row] = 'k';
+              board[col][row] = chessPiece('k', piecePosition);
               break;
           }
       } else if (row == 6) {
-        board[col][row] = 'P';
+        board[col][row] = chessPiece('P', piecePosition);
       } else if (row == 7) {
           switch (col) {
             case 0:
             case 7:
-              board[col][row] = 'R';
+              board[col][row] = chessPiece('R', piecePosition);
               break;
             case 1:
             case 6:
-              board[col][row] = 'N';
+              board[col][row] = chessPiece('N', piecePosition);
               break;
             case 2:
             case 5:
-              board[col][row] = 'B';
+              board[col][row] = chessPiece('B', piecePosition);
               break;
             case 3:
-              board[col][row] = 'Q';
+              board[col][row] = chessPiece('Q', piecePosition);
               break;
             case 4:
-              board[col][row] = 'K';
+              board[col][row] = chessPiece('K', piecePosition);
               break;
           }
       } else {
-        board[col][row] = ' ';
+        board[col][row] = chessPiece(' ', piecePosition);
       }
     }
   }
@@ -100,14 +104,13 @@ void chessBoard::movePiece(string move) {
 }
 
 pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination) {
-  cout << "destination = " << destination.first << ", "<< destination.second << endl;
   int c = 0;
   int col, row;
   pair<int, int>* matches = (pair<int, int>*) malloc(sizeof(pair<int,int>) * 9);
   matches[8] = make_pair(-1, -1);
   for (col = 0; col <= 7; col++) {
     for (row = 0; row <= 7; row++) {
-      if (board[col][row] == piece) {
+      if (board[col][row].piece == piece) {
         matches[c] = make_pair(col, row);
         cout<<matches[c].first<<", "<<matches[c].second<<" || ";
         c++;
@@ -119,7 +122,10 @@ pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination) {
   if (c <= 0) {
     throw invalid_argument("Could not find piece position: err 1");
   } else if (c == 1) {
-    return  matches[0];
+    pair<int, int> piecePosition;
+    piecePosition.first = matches[0].first;
+    piecePosition.second = matches[0].second;
+    return piecePosition;
   } else {
     return findCorrectPiece(destination, matches);
   }
@@ -147,7 +153,7 @@ pair<int, int> chessBoard::findCorrectPiece(pair<int, int> destination, pair<int
 }
 
 bool chessBoard::destInMoveSet(pair<int, int> destination, pair<int, int> piecePosition) {
-  pair<int, int>* validMoves = getMoveSet(piecePosition);
+  pair<int, int>* validMoves = board[piecePosition.first][piecePosition.second].getMoveSet();
   int i = 0;
   int c = 0;
   while (validMoves[c].first >= 0) {
@@ -157,172 +163,6 @@ bool chessBoard::destInMoveSet(pair<int, int> destination, pair<int, int> pieceP
     c++;
   }
 return false;
-}
-
-pair<int, int>* chessBoard::getMoveSet(pair<int, int> piecePosition) {
-  char piece = board[piecePosition.first][piecePosition.second];
-  pair<int, int>* validMoves = (pair<int, int>*) malloc(sizeof(pair<int, int>) * 30);
-  int i = 1, j = 0, c = 0;
-  switch (piece) {
-    case 'p':
-      validMoves[0] = make_pair(piecePosition.first, piecePosition.second + 1);
-      validMoves[1] = make_pair(piecePosition.first, piecePosition.second + 2);
-      c = 2;
-      break;
-    case 'P':
-      validMoves[0] = make_pair(piecePosition.first, piecePosition.second - 1);
-      validMoves[1] = make_pair(piecePosition.first, piecePosition.second - 2);
-      c = 2;
-      break;
-    case 'r': case 'R':
-      while (piecePosition.first + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first - i, piecePosition.second);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.second + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.second - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first, piecePosition.second - i);
-        i++;
-        c++;
-      }
-      i = 0;
-      break;
-    case 'n': case 'N':
-      if (piecePosition.first - 2 >= 0 && piecePosition.second - 1 >= 0) {
-        validMoves[c] = make_pair(piecePosition.first - 2, piecePosition.second - 1);
-        c++;
-      }
-      if (piecePosition.first - 1 >= 0 && piecePosition.second - 2 >= 0) {
-        validMoves[c] = make_pair(piecePosition.first - 1, piecePosition.second - 2);
-        c++;
-      }
-      if (piecePosition.first - 2 >= 0 && piecePosition.second + 1 < 8) {
-        validMoves[c] = make_pair(piecePosition.first - 2, piecePosition.second + 1);
-        c++;
-      }
-      if (piecePosition.first + 2 < 8 && piecePosition.second - 1 >= 0) {
-        validMoves[c] = make_pair(piecePosition.first + 2, piecePosition.second - 1);
-        c++;
-      }
-      if (piecePosition.first - 1 >= 0 && piecePosition.second + 2 < 8) {
-        validMoves[c] = make_pair(piecePosition.first - 1, piecePosition.second + 2);
-        c++;
-      }
-      if (piecePosition.first + 1 < 8 && piecePosition.second + 2 < 8) {
-        validMoves[c] = make_pair(piecePosition.first + 1, piecePosition.second + 2);
-        c++;
-      }
-      if (piecePosition.first + 2 < 8 && piecePosition.second + 1 < 8) {
-        validMoves[c] = make_pair(piecePosition.first + 2, piecePosition.second + 1);
-        c++;
-      }
-      if (piecePosition.first + 1 < 8 && piecePosition.second - 2 >= 0) {
-        validMoves[c] = make_pair(piecePosition.first + 1, piecePosition.second - 2);
-        c++;
-      }
-      break;
-    case 'b': case 'B':
-      while (piecePosition.first + i < 8 && piecePosition.second + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first - i >= 0 && piecePosition.second + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first - i, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first + i < 8 && piecePosition.second - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second - i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first - i >= 0 && piecePosition.second - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first - i, piecePosition.second - i);
-        i++;
-        c++;
-      }
-      i = 0;
-      break;
-    case 'q': case 'Q':
-      while (piecePosition.first + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first - i, piecePosition.second);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.second + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.second - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first, piecePosition.second - i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first + i < 8 && piecePosition.second + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first - i >= 0 && piecePosition.second + i < 8) {
-        validMoves[c] = make_pair(piecePosition.first - i, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first + i < 8 && piecePosition.second - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second - i);
-        i++;
-        c++;
-      }
-      i = 0;
-      while (piecePosition.first - i >= 0 && piecePosition.second - i >= 0) {
-        validMoves[c] = make_pair(piecePosition.first - i, piecePosition.second - i);
-        i++;
-        c++;
-      }
-      break;
-    case 'k': case 'K':
-      for (i = -1; i <= 1; i++) {
-        for (j = -1; j <= 1; j++) {
-          if (piecePosition.first + i < 8 && piecePosition.first + i >= 0 && piecePosition.second + j < 8 && piecePosition.second + j >= 0) {
-            validMoves[c] = make_pair(piecePosition.first + i, piecePosition.second + j);
-            c++;
-          }
-        }
-      }
-      break;
-    }
-  validMoves[c] = make_pair(-1,-1);
-  printMoveSet(validMoves);
-  return validMoves;
 }
 
 void chessBoard::printMoveSet(pair<int, int> moveSet[]) {
@@ -335,9 +175,10 @@ void chessBoard::printMoveSet(pair<int, int> moveSet[]) {
   return;
 }
 
-void chessBoard::changeSpot(pair<int, int> destination, pair<int, int> origination) {
-  board[destination.first][destination.second] = board[origination.first][origination.second];
-  board[origination.first][origination.second] = ' ';
+void chessBoard::changeSpot(pair<int, int> dest, pair<int, int> orig) {
+  board[orig.first][orig.second].changePiecePosition(dest);
+  board[dest.first][dest.second] = board[orig.first][orig.second];
+  board[orig.first][orig.second].piece = ' ';
   return;
 }
 
@@ -368,7 +209,7 @@ char chessBoard::getPiece(string move) {
 }
 
 void chessBoard::manualWrite(int col, int row, char chr) {
-  board[col][row] = chr;
+  board[col][row].piece = chr;
   return;
 }
 
