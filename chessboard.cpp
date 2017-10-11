@@ -1,6 +1,4 @@
 /*TODO
-split code into headers and .cpp file
-implement a piece class instead of using chars
 replace malloc commands with new
 close memory leaks using free(ptr*)
 implement special move rules (castling/en pasante)
@@ -8,6 +6,9 @@ check/checkmate
 complex input, used to distinguish multiple different possible piece movements
 first player/second player input
 move invalids if moving through any piece or onto friendly piece
+allow file input, with two options:
+  skip to latest board state
+  step through game, slowly or by user input
 */
 
 #include <iostream>
