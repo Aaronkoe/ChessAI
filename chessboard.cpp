@@ -1,6 +1,4 @@
 /*TODO
-replace malloc commands with new
-close memory leaks using free(ptr*)
 implement special move rules (castling/en pasante)
 check/checkmate
 complex input, used to distinguish multiple different possible piece movements
@@ -107,25 +105,25 @@ void chessBoard::movePiece(string move) {
 pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination) {
   int c = 0;
   int col, row;
-  pair<int, int>* matches = (pair<int, int>*) malloc(sizeof(pair<int,int>) * 9);
+  pair<int, int>* matches = new pair<int, int> [9];
   matches[8] = make_pair(-1, -1);
   for (col = 0; col <= 7; col++) {
     for (row = 0; row <= 7; row++) {
       if (board[col][row].piece == piece) {
         matches[c] = make_pair(col, row);
-        cout<<matches[c].first<<", "<<matches[c].second<<" || ";
         c++;
       }
     }
   }
   matches[c] = make_pair(-1,-1);
-  cout<<endl;
   if (c <= 0) {
+    delete[] matches;
     throw invalid_argument("Could not find piece position: err 1");
   } else if (c == 1) {
     pair<int, int> piecePosition;
     piecePosition.first = matches[0].first;
     piecePosition.second = matches[0].second;
+    delete[] matches;
     return piecePosition;
   } else {
     return findCorrectPiece(destination, matches);
@@ -135,7 +133,7 @@ pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination) {
 pair<int, int> chessBoard::findCorrectPiece(pair<int, int> destination, pair<int, int> matches[]) {
   int i = 0;
   int c = 0;
-  pair<int, int>* validMoveMatches = (pair<int,int>*) malloc(sizeof(pair<int,int>) * 11);
+  pair<int, int>* validMoveMatches = new pair<int, int> [11];
   validMoveMatches[10] = make_pair(-1,-1);
   while (matches[i].first != -1) {
     if (destInMoveSet(destination, matches[i])) {
@@ -145,16 +143,23 @@ pair<int, int> chessBoard::findCorrectPiece(pair<int, int> destination, pair<int
   i++;
   }
   if (c < 1) {
+    delete[] validMoveMatches;
     throw invalid_argument("Could not find piece position");
   } else if (c == 1) {
-    return validMoveMatches[0];
+    pair<int, int> validMoveMatch;
+    validMoveMatch.first = validMoveMatches[0].first;
+    validMoveMatch.second = validMoveMatches[0].second;
+    delete[] validMoveMatches;
+    return validMoveMatch;
   } else if (c >  1) {
+    delete[] validMoveMatches;
     throw invalid_argument("Too many piece matches, possible invalid syntax, try adding an identifier");
   }
 }
 
 bool chessBoard::destInMoveSet(pair<int, int> destination, pair<int, int> piecePosition) {
   pair<int, int>* validMoves = board[piecePosition.first][piecePosition.second].getMoveSet();
+  //validMoves = checkMoveConflicts(validMoves);
   int i = 0;
   int c = 0;
   while (validMoves[c].first >= 0) {
@@ -166,6 +171,10 @@ bool chessBoard::destInMoveSet(pair<int, int> destination, pair<int, int> pieceP
 return false;
 }
 
+//pair<int, int>* chessBoard::checkMoveConflicts(pair<int, int> moveSet) {
+ // }TODO change the end moveset signifier to -2, and make a end current manouver
+   //move set to -1. then, have this function check each moveset subset up until
+   //-1, removing any values that occur after a square that has a non ' ' character.
 void chessBoard::printMoveSet(pair<int, int> moveSet[]) {
   int i = 0;
   while (moveSet[i].first >= 0) {
@@ -180,6 +189,7 @@ void chessBoard::changeSpot(pair<int, int> dest, pair<int, int> orig) {
   board[orig.first][orig.second].changePiecePosition(dest);
   board[dest.first][dest.second] = board[orig.first][orig.second];
   board[orig.first][orig.second].piece = ' ';
+  board[orig.first][orig.second].whiteOrBlack = 0;
   return;
 }
 
@@ -218,13 +228,13 @@ int main() {
   chessBoard myBoard;
   myBoard.printBoard();
   string move;
-  cout << "enter a move: ";
   cin >> move;
   do {
     myBoard.movePiece(move);
     myBoard.printBoard();
-    cout <<endl<<"enter a move: ";
     cin >> move;
   } while (myBoard.validMove(move));
+  int possess = myBoard.board[1][1].getPlayerPossession();
+  cout << "\nplayer: " << possess;
   return 1;
 }

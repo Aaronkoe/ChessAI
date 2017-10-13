@@ -31,5 +31,6 @@ class chessBoard {
     void movePiece(std::string move);
     void manualWrite(int col, int row, char chr);
     bool validMove(std::string move);
+//    std::pair<int, int>* checkMoveConflicts(std::pair<int, int>* moveSet);
 };
 

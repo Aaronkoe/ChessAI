@@ -7,6 +7,12 @@ chessPiece::chessPiece() { }
 
 chessPiece::chessPiece(char pieceClass, std::pair<int, int> loc) {
   piece = pieceClass;
+  if (piece == ' ') whiteOrBlack = 0;
+  if (piece > 'a') {
+    whiteOrBlack = 2;
+  } else {
+    whiteOrBlack = 1;
+  }
   location.first = loc.first;
   location.second = loc.second;
 }
@@ -25,12 +31,16 @@ std::pair<int, int>* chessPiece::getMoveSet() {
   switch (piece) {
     case 'p':
       validMoves[0] = std::make_pair(piecePosition.first, piecePosition.second + 1);
-      validMoves[1] = std::make_pair(piecePosition.first, piecePosition.second + 2);
+      if (piecePosition.second = 1) {
+        validMoves[1] = std::make_pair(piecePosition.first, piecePosition.second + 2);
+      }
       c = 2;
       break;
     case 'P':
       validMoves[0] = std::make_pair(piecePosition.first, piecePosition.second - 1);
-      validMoves[1] = std::make_pair(piecePosition.first, piecePosition.second - 2);
+      if (piecePosition.second = 6) {
+        validMoves[1] = std::make_pair(piecePosition.first, piecePosition.second - 2);
+      }
       c = 2;
       break;
     case 'r': case 'R':
@@ -189,3 +199,7 @@ void chessPiece::changePiecePosition(std::pair<int, int> destination) {
   location.second = destination.second;
   return;
 }  
+
+int chessPiece::getPlayerPossession() {
+  return whiteOrBlack;
+}
