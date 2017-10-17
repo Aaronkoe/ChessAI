@@ -22,168 +22,254 @@ std::ostream& operator<< (std::ostream &out, const chessPiece &p) {
   return out;
 }
 
-std::pair<int, int>* chessPiece::getMoveSet() {
-  std::pair<int, int> piecePosition;
-  piecePosition.first = location.first;
-  piecePosition.second = location.second;
+std::pair<int, int>* chessPiece::getMoveSet(chessPiece board[8][8]) {
+  std::pair<int, int> dest;
+  dest.first = location.first;
+  dest.second = location.second;
   std::pair<int, int>* validMoves = (std::pair<int, int>*) malloc(sizeof(std::pair<int, int>) * 30);
   int i = 1, j = 1, c = 0;
   switch (piece) {
     case 'p':
-      validMoves[0] = std::make_pair(piecePosition.first, piecePosition.second + 1);
-      if (piecePosition.second = 1) {
-        validMoves[1] = std::make_pair(piecePosition.first, piecePosition.second + 2);
+      if (checkConflict(std::make_pair(dest.first, dest.second + 1), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first, dest.second + 1);
+        c++;
       }
-      c = 2;
+      if (dest.second = 1) {
+        if (checkConflict(std::make_pair(dest.first, dest.second + 2), board) == 0) {
+          validMoves[c] = std::make_pair(dest.first, dest.second + 2);
+          c++;
+        }
+      }
       break;
     case 'P':
-      validMoves[0] = std::make_pair(piecePosition.first, piecePosition.second - 1);
-      if (piecePosition.second = 6) {
-        validMoves[1] = std::make_pair(piecePosition.first, piecePosition.second - 2);
+      if (checkConflict(std::make_pair(dest.first, dest.second - 1), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first, dest.second - 1);
+        c++;
       }
-      c = 2;
+      if (dest.second = 6) {
+        if (checkConflict(std::make_pair(dest.first, dest.second - 2), board) == 0) {
+          validMoves[c] = std::make_pair(dest.first, dest.second - 2);
+          c++;
+        }
+      }
       break;
     case 'r': case 'R':
-      while (piecePosition.first + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second);
+      while (checkConflict(std::make_pair(dest.first + i, dest.second), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first + i, dest.second), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.first - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second);
+      while (checkConflict(std::make_pair(dest.first - i, dest.second), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - i, dest.second), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.second + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second + i);
+      while (checkConflict(std::make_pair(dest.first, dest.second + i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first, dest.second + i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first, dest.second + i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first, dest.second + i);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.second - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second - i);
+      while (checkConflict(std::make_pair(dest.first, dest.second - i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first, dest.second - i);
         i++;
         c++;
       }
-      i = 1;
+      if (checkConflict(std::make_pair(dest.first, dest.second - i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first, dest.second - i);
+        i++;
+        c++;
+      }
       break;
     case 'n': case 'N':
-      if (piecePosition.first - 2 >= 0 && piecePosition.second - 1 >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first - 2, piecePosition.second - 1);
+      if (checkConflict(std::make_pair(dest.first - 2, dest.second - 1), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first - 2, dest.second - 1);
         c++;
       }
-      if (piecePosition.first - 1 >= 0 && piecePosition.second - 2 >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first - 1, piecePosition.second - 2);
+      if (checkConflict(std::make_pair(dest.first - 1, dest.second - 2), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first - 1, dest.second - 2);
         c++;
       }
-      if (piecePosition.first - 2 >= 0 && piecePosition.second + 1 < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first - 2, piecePosition.second + 1);
+      if (checkConflict(std::make_pair(dest.first - 2, dest.second + 1), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first - 2, dest.second + 1);
         c++;
       }
-      if (piecePosition.first + 2 < 8 && piecePosition.second - 1 >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first + 2, piecePosition.second - 1);
+      if (checkConflict(std::make_pair(dest.first + 2, dest.second - 1), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first + 2, dest.second - 1);
         c++;
       }
-      if (piecePosition.first - 1 >= 0 && piecePosition.second + 2 < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first - 1, piecePosition.second + 2);
+      if (checkConflict(std::make_pair(dest.first - 1, dest.second + 2), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first - 1, dest.second + 2);
         c++;
       }
-      if (piecePosition.first + 1 < 8 && piecePosition.second + 2 < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first + 1, piecePosition.second + 2);
+      if (checkConflict(std::make_pair(dest.first + 1, dest.second + 2), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first + 1, dest.second + 2);
         c++;
       }
-      if (piecePosition.first + 2 < 8 && piecePosition.second + 1 < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first + 2, piecePosition.second + 1);
+      if (checkConflict(std::make_pair(dest.first + 2, dest.second + 1), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first + 2, dest.second + 1);
         c++;
       }
-      if (piecePosition.first + 1 < 8 && piecePosition.second - 2 >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first + 1, piecePosition.second - 2);
+      if (checkConflict(std::make_pair(dest.first + 1, dest.second - 2), board) < 2) {
+        validMoves[c] = std::make_pair(dest.first + 1, dest.second - 2);
         c++;
       }
       break;
     case 'b': case 'B':
-      while (piecePosition.first + i < 8 && piecePosition.second + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second + i);
+      while (checkConflict(std::make_pair(dest.first + i, dest.second + i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second + i);
         i++;
         c++;
       }
-      while (piecePosition.first - i >= 0 && piecePosition.second + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second + i);
-        i++;
-        c++;
-      }
-      i = 1;
-      while (piecePosition.first + i < 8 && piecePosition.second - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second - i);
+      if (checkConflict(std::make_pair(dest.first + i, dest.second + i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second + i);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.first - i >= 0 && piecePosition.second - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second - i);
+      while (checkConflict(std::make_pair(dest.first - i, dest.second + i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second + i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - i, dest.second + i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second + i);
         i++;
         c++;
       }
       i = 1;
+      while (checkConflict(std::make_pair(dest.first + i, dest.second - i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second - i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first + i, dest.second - i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second - i);
+        i++;
+        c++;
+      }
+      i = 1;
+      while (checkConflict(std::make_pair(dest.first - i, dest.second - i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second - i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - i, dest.second - i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second - i);
+        i++;
+        c++;
+      }
       break;
     case 'q': case 'Q':
-      while (piecePosition.first + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second);
+      while (checkConflict(std::make_pair(dest.first + i, dest.second), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first + i, dest.second), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.first - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second);
+      while (checkConflict(std::make_pair(dest.first - i, dest.second), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - i, dest.second), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.second + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second + i);
+      while (checkConflict(std::make_pair(dest.first, dest.second + i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first, dest.second + i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first, dest.second + i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first, dest.second + i);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.second - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first, piecePosition.second - i);
+      while (checkConflict(std::make_pair(dest.first, dest.second - i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first, dest.second - i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first, dest.second - i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first, dest.second - i);
+        i++;
+        c++;
+      }
+      while (checkConflict(std::make_pair(dest.first + i, dest.second + i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second + i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first + i, dest.second + i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second + i);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.first + i < 8 && piecePosition.second + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second + i);
+      while (checkConflict(std::make_pair(dest.first - i, dest.second + i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second + i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - i, dest.second + i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second + i);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.first - i >= 0 && piecePosition.second + i < 8) {
-        validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second + i);
+      while (checkConflict(std::make_pair(dest.first + i, dest.second - i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second - i);
+        i++;
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first + i, dest.second - i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + i, dest.second - i);
         i++;
         c++;
       }
       i = 1;
-      while (piecePosition.first + i < 8 && piecePosition.second - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second - i);
+      while (checkConflict(std::make_pair(dest.first - i, dest.second - i), board) == 0) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second - i);
         i++;
         c++;
       }
-      i = 1;
-      while (piecePosition.first - i >= 0 && piecePosition.second - i >= 0) {
-        validMoves[c] = std::make_pair(piecePosition.first - i, piecePosition.second - i);
+      if (checkConflict(std::make_pair(dest.first - i, dest.second - i), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - i, dest.second - i);
         i++;
         c++;
       }
-      i = 1;
       break;
     case 'k': case 'K':
       for (i = -1; i <= 1; i++) {
         for (j = -1; j <= 1; j++) {
-          if (piecePosition.first  + i < 8 && piecePosition.first  + i >= 0 && 
-              piecePosition.second + j < 8 && piecePosition.second + j >= 0) {
-            validMoves[c] = std::make_pair(piecePosition.first + i, piecePosition.second + j);
+          if (checkConflict(std::make_pair(dest.first + i, dest.second + j), board) < 2) {
+            validMoves[c] = std::make_pair(dest.first + i, dest.second + j);
             c++;
           }
         }
@@ -192,6 +278,31 @@ std::pair<int, int>* chessPiece::getMoveSet() {
     }
   validMoves[c] = std::make_pair(-1,-1);
   return validMoves;
+}
+
+/*checkConflict takes a destination pair<int, int>, and the current boardstate
+ *checkConflict is used to determine how far a piece can move before it-
+    A. runs into a friendly piece
+    B. tries to go over any piece
+ *checkConflict will return an int from 0,1,2
+   0: there are no conflicts
+   1: there is a conflict with an enemy piece, therefore the moving piece can land on the current
+        tile but go no farther
+   2: there is a conflict with a friendly piece or the move is out of bounds, 
+        therefore the moving piece cannot land on the current tile
+*/
+int chessPiece::checkConflict(std::pair<int, int> dest, chessPiece board[8][8]) {
+  if (dest.first < 0 || dest.first > 8 || dest.second < 0 || dest.second > 8) {
+    return 2;
+  }
+  if (board[dest.first][dest.second].piece == ' ') {
+    return 0;
+  }
+  if (board[dest.first][dest.second].whiteOrBlack != whiteOrBlack) {
+    return 1;
+  } else {
+    return 2;
+  }
 }
 
 void chessPiece::changePiecePosition(std::pair<int, int> destination) {
