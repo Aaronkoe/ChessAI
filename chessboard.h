@@ -4,7 +4,7 @@
 #include "chesspiece.cpp"
 
 class chessBoard {
-  private:
+  public:
     //printing functions
     void printMoveSet(std::pair<int, int> moveSet[]);
 

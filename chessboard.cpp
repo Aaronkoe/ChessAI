@@ -17,6 +17,7 @@ allow file input, with two options:
 
 using namespace std;
 
+int getLen(string str);
 
 chessBoard::chessBoard() {
   int col, row;
@@ -98,6 +99,10 @@ void chessBoard::movePiece(string move) {
   char piece = getPiece(move);
   pair<int, int> destination = getDestination(move);
   pair<int, int> origination = findPiece(piece, destination);
+  if (origination == make_pair(-1, -1)) {
+    cout << "invalid move, try again\n";
+    return;
+  }
   changeSpot(destination, origination);
   return;
 }
@@ -118,13 +123,7 @@ pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination) {
   matches[c] = make_pair(-1,-1);
   if (c <= 0) {
     delete[] matches;
-    throw invalid_argument("Could not find piece position: err 1");
-  } else if (c == 1) {
-    pair<int, int> piecePosition;
-    piecePosition.first = matches[0].first;
-    piecePosition.second = matches[0].second;
-    delete[] matches;
-    return piecePosition;
+    return make_pair(-1, -1);
   } else {
     return findCorrectPiece(destination, matches);
   }
@@ -144,7 +143,7 @@ pair<int, int> chessBoard::findCorrectPiece(pair<int, int> destination, pair<int
   }
   if (c < 1) {
     delete[] validMoveMatches;
-    throw invalid_argument("Could not find piece position");
+    return make_pair(-1, -1);
   } else if (c == 1) {
     pair<int, int> validMoveMatch;
     validMoveMatch.first = validMoveMatches[0].first;
@@ -153,12 +152,12 @@ pair<int, int> chessBoard::findCorrectPiece(pair<int, int> destination, pair<int
     return validMoveMatch;
   } else if (c >  1) {
     delete[] validMoveMatches;
-    throw invalid_argument("Too many piece matches, possible invalid syntax, try adding an identifier");
+    return make_pair(-1, -1);
   }
 }
 
 bool chessBoard::destInMoveSet(pair<int, int> destination, pair<int, int> piecePosition) {
-  pair<int, int>* validMoves = board[piecePosition.first][piecePosition.second].getMoveSet();
+  pair<int, int>* validMoves = board[piecePosition.first][piecePosition.second].getMoveSet(board);
   //validMoves = checkMoveConflicts(validMoves);
   int i = 0;
   int c = 0;
@@ -171,10 +170,6 @@ bool chessBoard::destInMoveSet(pair<int, int> destination, pair<int, int> pieceP
 return false;
 }
 
-//pair<int, int>* chessBoard::checkMoveConflicts(pair<int, int> moveSet) {
- // }TODO change the end moveset signifier to -2, and make a end current manouver
-   //move set to -1. then, have this function check each moveset subset up until
-   //-1, removing any values that occur after a square that has a non ' ' character.
 void chessBoard::printMoveSet(pair<int, int> moveSet[]) {
   int i = 0;
   while (moveSet[i].first >= 0) {
@@ -194,24 +189,59 @@ void chessBoard::changeSpot(pair<int, int> dest, pair<int, int> orig) {
 }
 
 bool chessBoard::validMove(string move) {
-  if (int(move[0]) > 'z' || int(move[0]) < 'A') {
+  int len;
+  for (len = 0; move[len] != '\0'; len++);
+  if (len < 3 || len > 5) {
     cout << "check validMove: False\n";
     return false;
   }
-  if (int(move[0]) > 'z' || int(move[0]) < 'A') {
-    cout << "check validMove: False\n";
-    return false;
-  }
-  if (int(move[2]) > '9' || int(move[2]) < '0') {
-    cout << "check validMove: False\n";
-    return false;
-  }
+  if (len == 3) {
+    char x = move[0];
+    if (x != 'p' && x != 'r' && x != 'n' && x != 'b' && x != 'k' && x != 'q' &&
+        x != 'P' && x != 'R' && x != 'N' && x != 'B' && x != 'K' && x != 'Q') {
+      cout << "check validMove: False\n";
+      return false;
+    }
+    x = move[1];
+    if (x < 'a' || x > 'h') {
+      cout << "check validMove: False\n";
+      return false;
+    }
+    x = move[2];
+    if (x < '0' || x > '8'){
+      cout << "check validMove: False\n";
+      return false;
+    }
+  } else if (len == 4) {
+    char x = move[0];
+    if (x != 'p' && x != 'r' && x != 'n' && x != 'b' && x != 'k' && x != 'q' &&
+        x != 'P' && x != 'R' && x != 'N' && x != 'B' && x != 'K' && x != 'Q') {
+      cout << "check validMove: False\n";
+      return false;
+    }
+    x = move[1];
+    if ((x < 'a' || x > 'h') && (x < '0' && x > '8')) {
+      cout << "check validMove: False\n";
+      return false;
+    }
+    x = move[2];
+    if (x < 'a' || x > 'h') {
+      cout << "check validMove: False\n";
+      return false;
+    }
+    x = move[3];
+    if (x < '0' || x > '8'){
+      cout << "check validMove: False\n";
+      return false;
+    }
+  } 
   return true;
 }
 
 pair<int, int> chessBoard::getDestination(string move) {
-  int col = move[1] - 'a';
-  int row = move[2] - '0' - 1;
+  int len = getLen(move);
+  int col = move[len - 2] - 'a';
+  int row = move[len - 1] - '0' - 1;
   return make_pair(col, row);
 }
 
@@ -224,17 +254,25 @@ void chessBoard::manualWrite(int col, int row, char chr) {
   return;
 }
 
+int getLen(string str) {
+  int len;
+  for (len = 0; str[len] != '\0'; len++);
+  return len;
+}
+
 int main() {
   chessBoard myBoard;
   myBoard.printBoard();
   string move;
   cin >> move;
-  do {
+  while (true) {
     myBoard.movePiece(move);
     myBoard.printBoard();
+    cout <<"new move: ";
     cin >> move;
-  } while (myBoard.validMove(move));
-  int possess = myBoard.board[1][1].getPlayerPossession();
-  cout << "\nplayer: " << possess;
+    if (!(myBoard.validMove(move))) {
+      break;
+    }
+  }
   return 1;
 }
