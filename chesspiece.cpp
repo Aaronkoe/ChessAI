@@ -5,6 +5,9 @@
 
 chessPiece::chessPiece() { }
 
+/*constructor of a chesspeice. contains the location of the chess piece
+ *as well as the char that identifies the piece's type. WhiteorBlack
+ *records the possession of a piece as an int, 0 or 1*/
 chessPiece::chessPiece(char pieceClass, std::pair<int, int> loc) {
   piece = pieceClass;
   if (piece == ' ') whiteOrBlack = 0;
@@ -17,11 +20,14 @@ chessPiece::chessPiece(char pieceClass, std::pair<int, int> loc) {
   location.second = loc.second;
 }
 
+/*makes it so that the cout << operator prints the chesspiece's type*/
 std::ostream& operator<< (std::ostream &out, const chessPiece &p) {
   out << p.piece;
   return out;
 }
 
+/*getMove set, returns a pointer to an array of int pairs that represents the
+ *entirety of a pieces possible moves based on its type and its surroundings*/
 std::pair<int, int>* chessPiece::getMoveSet(chessPiece board[8][8]) {
   std::pair<int, int> dest;
   dest.first = location.first;
@@ -305,12 +311,16 @@ int chessPiece::checkConflict(std::pair<int, int> dest, chessPiece board[8][8]) 
   }
 }
 
+/*changePiecePosition changes a pieces recorded position in its member variable
+ *to the input destination*/
 void chessPiece::changePiecePosition(std::pair<int, int> destination) {
   location.first = destination.first;
   location.second = destination.second;
   return;
 }  
 
+/*getPlayerPossession returns the int stored in a piece's whiteOrBlack
+ *member variable*/
 int chessPiece::getPlayerPossession() {
   return whiteOrBlack;
 }

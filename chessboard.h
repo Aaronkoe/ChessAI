@@ -12,15 +12,15 @@ class chessBoard {
     void changeSpot(std::pair<int, int> dest, std::pair<int, int> orig);
 
     //piece finding functions
-    std::pair<int, int> findPiece(char piece, std::pair<int, int> destination);
-    std::pair<int, int> findCorrectPiece(std::pair<int, int> destination, std::pair<int, int> matches[]);
+    std::pair<int, int> findPiece(char piece, std::pair<int, int> destination, std::pair<int, int> ident);
+    std::pair<int, int> findCorrectPiece(std::pair<int, int> destination, std::pair<int, int> ident, std::pair<int, int> matches[]);
 
     //information parsing functions
-    char            getPiece(std::string move);
-    std::pair<int, int>  getDestination(std::string move);
+    char                 getPiece       (std::string move);
+    std::pair<int, int>  getDestination (std::string move);
+    std::pair<int, int>  getIdentifier  (std::string move);
     std::pair<int, int>* getMoveSet(std::pair<int, int> piecePosition);
     bool destInMoveSet(std::pair<int, int> destination, std::pair<int, int> piecePosition);
-  public:
     //member variables
     chessPiece board[8][8];
     //constructor
