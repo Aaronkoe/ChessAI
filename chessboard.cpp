@@ -141,11 +141,34 @@ pair<int, int> chessBoard::findPiece(char piece, pair<int, int> destination,
   int col, row;
   pair<int, int>* matches = new pair<int, int> [9];
   matches[8] = make_pair(-1, -1);
-  for (col = 0; col <= 7; col++) {
-    for (row = 0; row <= 7; row++) {
-      if (board[col][row].piece == piece) {
-        matches[c] = make_pair(col, row);
+  if (ident != make_pair(-1, -1)) {
+    if (ident.second == -1) {
+      for (row = 0; row <= 7; row++) {
+        if (board[ident.first][row].piece == piece) {
+          matches[c] = make_pair(ident.first, row);
+          c++;
+        }
+      }
+    } else if (ident.first == -1) {
+      for (col = 0; col <= 7; col++) {
+        if (board[col][ident.second].piece == piece) {
+          matches[c] = make_pair(col, ident.second);
+          c++;
+        }
+      }
+    } else {
+      if (board[ident.first][ident.second].piece == piece) {
+        matches[c] = make_pair(ident.first, ident.second);
         c++;
+      }
+    }
+  } else {
+    for (col = 0; col <= 7; col++) {
+      for (row = 0; row <= 7; row++) {
+        if (board[col][row].piece == piece) {
+          matches[c] = make_pair(col, row);
+          c++;
+        }
       }
     }
   }
@@ -340,10 +363,10 @@ pair<int, int> chessBoard::getIdentifier(string move) {
     if (int(move[1]) >= 'a') {
       return make_pair(int(move[1] - 'a'), -1);
     } else {
-      return make_pair(-1, int(move[1] - '0'));
+      return make_pair(-1, int(move[1] - '1'));
     }
   } else if (len == 5) {
-    return make_pair(move[1] - 'a', move[2] - '0');
+    return make_pair(move[1] - 'a', move[2] - '1');
   }
   return make_pair(-1, -1);
 }
@@ -377,11 +400,9 @@ int main() {
   while (true) {
     myBoard.movePiece(move);
     myBoard.printBoard();
-    cout <<"new move: ";
+    cout <<"move executed.\nIdentifier was: " << myBoard.getIdentifier(move).first << ", " <<myBoard.getIdentifier(move).second<< endl;
+    cout << "next move:\n";
     cin >> move;
-    if (!(myBoard.validMove(move))) {
-      break;
-    }
   }
   return 1;
 }
