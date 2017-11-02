@@ -5,7 +5,6 @@ All code and algorithms have been created by me without outside materials
 TODO
 implement special move rules (castling/en pasante)
 check/checkmate
-complex input, used to distinguish multiple different possible piece movements
 first player/second player input
 move invalids if moving through any piece or onto friendly piece
 allow file input, with two options:
