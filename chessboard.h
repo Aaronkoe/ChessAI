@@ -8,6 +8,9 @@ class chessBoard {
     //printing functions
     void printMoveSet(std::pair<int, int> moveSet[]);
 
+    //game administration functions
+    void playGame();
+
     //piece moving functions
     void changeSpot(std::pair<int, int> dest, std::pair<int, int> orig);
 
@@ -30,7 +33,7 @@ class chessBoard {
     void printBoard(void);
     void movePiece(std::string move);
     void manualWrite(int col, int row, char chr);
-    bool validMove(std::string move);
+    bool validMove(std::string move, int checkCase, int playerTurn);
 //    std::pair<int, int>* checkMoveConflicts(std::pair<int, int>* moveSet);
 };
 

@@ -3,7 +3,6 @@ implement special move rules (castling/en pasante)
 check/checkmate
 complex input, used to distinguish multiple different possible piece movements
 first player/second player input
-move invalids if moving through any piece or onto friendly piece
 allow file input, with two options:
   skip to latest board state
   step through game, slowly or by user input
@@ -101,6 +100,25 @@ void chessBoard::printBoard() {
   }
   cout << "  +===============================+\n";
   cout << "    a   b   c   d   e   f   g   h\n";
+}
+
+void chessBoard::playGame() {
+  string move;
+  while (true) {
+    printBoard();
+    do {
+      cout << "Player 1, what is your move: ";
+      cin >> move;
+    } while (!(validMove(move, 1, 0)));
+    movePiece(move);
+    printBoard();
+    do {
+      cout << "Player 2, what is your move: ";
+      cin >> move;
+    } while (!(validMove(move, 1, 1)));
+    movePiece(move);
+  }
+  return;
 }
 
 /*movePiece: the main part of the program
@@ -267,8 +285,21 @@ void chessBoard::changeSpot(pair<int, int> dest, pair<int, int> orig) {
 /*validMove is a priliminary validation function that checks to make sure the 
  *input string is the correct length and is made up of the correct characters
  */
-bool chessBoard::validMove(string move) {
+bool chessBoard::validMove(string move, int checkCase, int playerTurn) {
   int len;
+  if (checkCase) {
+    if (playerTurn) {
+      if (move[0] < 'a') {
+        cout << "check validMove: False err 11";
+        return false;
+      }
+    } else {
+      if (move[0] > 'Z') {
+        cout << "check validMove: False err 12";
+        return false;
+      }
+    }
+  }
   char x;
   for (len = 0; move[len] != '\0'; len++);
   if (len < 3 || len > 5) {
@@ -394,15 +425,6 @@ int getLen(string str) {
 /*driver of the chess program*/
 int main() {
   chessBoard myBoard;
-  myBoard.printBoard();
-  string move;
-  cin >> move;
-  while (true) {
-    myBoard.movePiece(move);
-    myBoard.printBoard();
-    cout <<"move executed.\nIdentifier was: " << myBoard.getIdentifier(move).first << ", " <<myBoard.getIdentifier(move).second<< endl;
-    cout << "next move:\n";
-    cin >> move;
-  }
+  myBoard.playGame();
   return 1;
 }
