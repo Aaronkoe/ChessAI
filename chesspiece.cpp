@@ -40,11 +40,21 @@ std::pair<int, int>* chessPiece::getMoveSet(chessPiece board[8][8]) {
         validMoves[c] = std::make_pair(dest.first, dest.second + 1);
         c++;
       }
-      if (dest.second = 1) {
+      if (dest.second == 1) {
         if (checkConflict(std::make_pair(dest.first, dest.second + 2), board) == 0) {
           validMoves[c] = std::make_pair(dest.first, dest.second + 2);
           c++;
         }
+      }
+      std::cout<<location.first<<" "<<location.second<<std::endl;
+      std::cout<<dest.first<<" "<<dest.second<<std::endl;
+      if (checkConflict(std::make_pair(dest.first + 1, dest.second + 1), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + 1, dest.second + 1);
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - 1, dest.second + 1), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - 1, dest.second + 1);
+        c++;
       }
       break;
     case 'P':
@@ -52,11 +62,19 @@ std::pair<int, int>* chessPiece::getMoveSet(chessPiece board[8][8]) {
         validMoves[c] = std::make_pair(dest.first, dest.second - 1);
         c++;
       }
-      if (dest.second = 6) {
+      if (dest.second == 6) {
         if (checkConflict(std::make_pair(dest.first, dest.second - 2), board) == 0) {
           validMoves[c] = std::make_pair(dest.first, dest.second - 2);
           c++;
         }
+      }
+      if (checkConflict(std::make_pair(dest.first + 1, dest.second - 1), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first + 1, dest.second - 1);
+        c++;
+      }
+      if (checkConflict(std::make_pair(dest.first - 1, dest.second - 1), board) == 1) {
+        validMoves[c] = std::make_pair(dest.first - 1, dest.second - 1);
+        c++;
       }
       break;
     case 'r': case 'R':

@@ -31,7 +31,7 @@ class chessBoard {
 
     //functions
     void printBoard(void);
-    void movePiece(std::string move);
+    bool movePiece(std::string move);
     void manualWrite(int col, int row, char chr);
     bool validMove(std::string move, int checkCase, int playerTurn);
 //    std::pair<int, int>* checkMoveConflicts(std::pair<int, int>* moveSet);

@@ -109,14 +109,12 @@ void chessBoard::playGame() {
     do {
       cout << "Player 1, what is your move: ";
       cin >> move;
-    } while (!(validMove(move, 1, 0)));
-    movePiece(move);
+    } while (!(validMove(move, 1, 0)) || !(movePiece(move)));
     printBoard();
     do {
       cout << "Player 2, what is your move: ";
       cin >> move;
-    } while (!(validMove(move, 1, 1)));
-    movePiece(move);
+    } while (!(validMove(move, 1, 1)) || !(movePiece(move)));
   }
   return;
 }
@@ -129,18 +127,20 @@ void chessBoard::playGame() {
  *invariant: if the move is a valid move, (regardless of whose turn it is, as
  *that functionality is not yet implemented) it will modify the board so that
  *the input move has taken place. Any opposing pieces in the destination of
- *the move will be eliminated from the game*/
-void chessBoard::movePiece(string move) {
+ *the move will be eliminated from the game
+ *returns true if the piece was moved without error, and false if there was an
+ *error*/
+bool chessBoard::movePiece(string move) {
   char piece = getPiece(move);
   pair<int, int> identifier = getIdentifier(move);
   pair<int, int> destination = getDestination(move);
   pair<int, int> origination = findPiece(piece, destination, identifier);
   if (origination == make_pair(-1, -1)) {
     cout << "invalid move, try again\n";
-    return;
+    return false;
   }
   changeSpot(destination, origination);
-  return;
+  return true;
 }
 
 /*findPiece is an auxillary method for movePiece()
