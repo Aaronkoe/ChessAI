@@ -46,8 +46,6 @@ std::pair<int, int>* chessPiece::getMoveSet(chessPiece board[8][8]) {
           c++;
         }
       }
-      std::cout<<location.first<<" "<<location.second<<std::endl;
-      std::cout<<dest.first<<" "<<dest.second<<std::endl;
       if (checkConflict(std::make_pair(dest.first + 1, dest.second + 1), board) == 1) {
         validMoves[c] = std::make_pair(dest.first + 1, dest.second + 1);
         c++;
