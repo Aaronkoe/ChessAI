@@ -1,8 +1,6 @@
 /*TODO
-implement special move rules (castling/en pasante)
-check/checkmate
-complex input, used to distinguish multiple different possible piece movements
-first player/second player input
+implement a move log, this will allow en passent to be executed
+map reduce all squares under attack this will allow castling to be executed and check/checkmate, and ai
 allow file input, with two options:
   skip to latest board state
   step through game, slowly or by user input
@@ -286,90 +284,44 @@ void chessBoard::changeSpot(pair<int, int> dest, pair<int, int> orig) {
  *input string is the correct length and is made up of the correct characters
  */
 bool chessBoard::validMove(string move, int checkCase, int playerTurn) {
-  int len;
+  int len = getLen(move);
+  if (len < 3 || len > 5) {
+    return false;
+  }
+
   if (checkCase) {
-    if (playerTurn) {
-      if (move[0] < 'a') {
-        cout << "check validMove: False err 11";
+    if (!playerTurn) {
+      if (move[len - 3] > 'Z' || move[len - 3] < 'A') {
+        cout << "player 1's turn, the " << len-2 << "th character should be uppercase\n";
         return false;
       }
     } else {
-      if (move[0] > 'Z') {
-        cout << "check validMove: False err 12";
+      if (move[len - 3] > 'z' || move[len - 3] < 'a') {
+        cout << "player 2's turn, the " << len-2 << "th character should be lowercase\n";
         return false;
       }
     }
   }
-  char x;
-  for (len = 0; move[len] != '\0'; len++);
-  if (len < 3 || len > 5) {
-    cout << "check validMove: False err 1\n";
+
+  if (move[len - 1] > '8' || move[len - 1] < '1') {
     return false;
   }
-  if (len == 3) {
-    x = move[0];
-    if (x != 'p' && x != 'r' && x != 'n' && x != 'b' && x != 'k' && x != 'q' &&
-        x != 'P' && x != 'R' && x != 'N' && x != 'B' && x != 'K' && x != 'Q') {
-      cout << "check validMove: False err 2\n";
+
+  if (move[len - 2] > 'z' || move[len - 2] < 'a') {
+    return false;
+  }
+
+  if (move[len - 3] > 'z' || move[len - 3] < 'A') {
+    return false;
+  }
+
+  if (len >= 4) {
+    if (move[len - 4] > 'z' || move[len - 4] < '1') {
       return false;
     }
-    x = move[1];
-    if (x < 'a' || x > 'h') {
-      cout << "check validMove: False err 3\n";
-      return false;
-    }
-    x = move[2];
-    if (x < '0' || x > '8'){
-      cout << "check validMove: False err 4\n";
-      return false;
-    }
-  } else if (len == 4) {
-    char x = move[0];
-    if (x != 'p' && x != 'r' && x != 'n' && x != 'b' && x != 'k' && x != 'q' &&
-        x != 'P' && x != 'R' && x != 'N' && x != 'B' && x != 'K' && x != 'Q') {
-      cout << "check validMove: False err 5\n";
-      return false;
-    }
-    x = move[1];
-    if ((x < 'a' || x > 'h') && (x < '0' && x > '8')) {
-      cout << "check validMove: False err 6\n";
-      return false;
-    }
-    x = move[2];
-    if (x < 'a' || x > 'h') {
-      cout << "check validMove: False err 7\n";
-      return false;
-    }
-    x = move[3];
-    if (x < '0' || x > '8'){
-      cout << "check validMove: False err 8\n";
-      return false;
-    }
-  } else {
-    x = move[0];
-    if (x != 'p' && x != 'r' && x != 'n' && x != 'b' && x != 'k' && x != 'q' &&
-        x != 'P' && x != 'R' && x != 'N' && x != 'B' && x != 'K' && x != 'Q') {
-      cout << "check validMove: False err 9\n";
-      return false;
-    }
-    x = move[1];
-    if ((x < 'a' || x > 'h') && (x < '0' && x > '8')) {
-      cout << "check validMove: False err 10\n";
-      return false;
-    }
-    x = move[2];
-    if ((x < 'a' || x > 'h') && (x < '0' && x > '8')) {
-      cout << "check validMove: False err 11\n";
-      return false;
-    }
-    x = move[3];
-    if (x < 'a' || x > 'h') {
-      cout << "check validMove: False err 12\n";
-      return false;
-    }
-    x = move[4];
-    if (x < '0' || x > '8'){
-      cout << "check validMove: False err 13\n";
+  }
+  if (len == 5) {
+    if (move[len - 5] > 'z' || move[len - 4] < 'a') {
       return false;
     }
   }
@@ -386,18 +338,17 @@ pair<int, int> chessBoard::getDestination(string move) {
   return make_pair(col, row);
 }
 
-/*getIdentifier returns the identifiers as a pair of ints. this fucntion is
- *not yet used*/
+/*getIdentifier returns the identifiers as a pair of ints. this fucntion is*/
 pair<int, int> chessBoard::getIdentifier(string move) {
   int len = getLen(move);
   if (len == 4) {
-    if (int(move[1]) >= 'a') {
-      return make_pair(int(move[1] - 'a'), -1);
+    if (int(move[0]) >= 'a') {
+      return make_pair(int(move[0] - 'a'), -1);
     } else {
-      return make_pair(-1, int(move[1] - '1'));
+      return make_pair(-1, int(move[0] - '1'));
     }
   } else if (len == 5) {
-    return make_pair(move[1] - 'a', move[2] - '1');
+    return make_pair(move[0] - 'a', move[1] - '1');
   }
   return make_pair(-1, -1);
 }
@@ -405,7 +356,7 @@ pair<int, int> chessBoard::getIdentifier(string move) {
 /*getPiece returns the piece character as a char based on the input string move
  */
 char chessBoard::getPiece(string move) {
-  return move[0];
+  return move[getLen(move) - 3];
 }
 
 /*manualWrite is a debugging function used to force the board state to change so
